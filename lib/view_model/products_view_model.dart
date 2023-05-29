@@ -4,7 +4,7 @@ import 'package:fake_store/models/product_model.dart';
 import 'package:fake_store/services/http_service.dart';
 import 'package:flutter/cupertino.dart';
 
-class AppProvider extends ChangeNotifier{
+class ProductsViewModel extends ChangeNotifier{
   HttpService service = HttpService();
   bool isLoading = false;
   List<CategoryModel> _categories = [];

@@ -21,3 +21,4 @@ Color productBackGround = const Color(0xFFF6F6F6);
 Color priceColor = const Color(0xFFD88D1F);
 Color textColor = const Color(0xFF1F2438);
 Color starBackground = const Color(0xFFFC8805);
+Color navButtonColor = const Color(0xFFEEF2F5);

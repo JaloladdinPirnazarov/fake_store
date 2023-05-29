@@ -1,6 +1,7 @@
 import 'package:fake_store/models/rate_model.dart';
 
 class ProductModel {
+  int sqfId;
   final int id;
   final String title;
   final double price;
@@ -16,6 +17,6 @@ class ProductModel {
       this.description,
       this.category,
       this.image,
-      //this.rate
+  {this.sqfId = -1}
   );
 }
