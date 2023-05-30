@@ -64,7 +64,7 @@ class _HomeState extends State<Home> {
             }
             final categories = value.categories;
             final products = value.products;
-            return Container(
+            return  Container(
               height: MediaQuery.of(context).size.height,
               color: white,
               child: Column(
@@ -94,7 +94,7 @@ class _HomeState extends State<Home> {
                               child: InkWell(
                                 onTap: () {
                                   Provider.of<ProductsViewModel>(context, listen: false).setProducts(position);
-                                  },
+                                },
                                 child: Padding(
                                   padding: const EdgeInsets.only(right: 15),
                                   child: Text(

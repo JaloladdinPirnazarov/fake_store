@@ -1,4 +1,3 @@
-import 'package:fake_store/models/product_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -30,26 +29,26 @@ class SqfLiteService {
   void populateDb(Database database, int version) async {
     await database.execute("CREATE TABLE IF NOT EXISTS $tableName("
         "$columnId INTEGER PRIMARY KEY AUTOINCREMENT,"
-        "$columnProductId INTEGER,"
-        ")");
+        "$columnProductId INTEGER)");
   }
 
-  Future<void> addItem(int productId) async {
+  Future<bool> addItem(int productId) async {
     Database db = await getDb();
-    var exists = await checkValueExists(productId);
-    if (!exists) {
+    var isNotExists = !await checkValueExists(productId);
+    if (isNotExists) {
       var id = await db.insert(tableName, {columnProductId: productId});
       print("Item id: $id");
     }
+    return isNotExists;
   }
 
   Future<List<Map<String, dynamic>>> getItems() async {
     Database db = await getDb();
-    var result = await db.query(tableName, columns: [columnId, columnId]);
+    var result = await db.query(tableName, columns: [columnId, columnProductId]);
     return result;
   }
 
-  Future<void> deleteMind(int id) async {
+  Future<void> deleteProduct(int id) async {
     Database db = await getDb();
     await db.delete(tableName, where: "$columnId = ?", whereArgs: [id]);
   }
@@ -62,7 +61,6 @@ class SqfLiteService {
       whereArgs: [productId],
       limit: 1,
     );
-
     return queryResult.isNotEmpty;
   }
 }

@@ -2,7 +2,6 @@ import 'package:fake_store/models/product_model.dart';
 import 'package:fake_store/others/styles.dart';
 import 'package:fake_store/screens/product_page.dart';
 import 'package:fake_store/screens/shopping_card.dart';
-import 'package:fake_store/services/http_service.dart';
 import 'package:fake_store/services/sqflite_service.dart';
 import 'package:fake_store/view_model/shopping_card_view_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -118,7 +117,10 @@ class Widgets {
             ),
             ElevatedButton(
               onPressed: () async {
-                await sqfLiteService.addItem(productModel.id);
+                var isAdded = await sqfLiteService.addItem(productModel.id);
+                if(isAdded){
+                  showSnackBarMessage(context, "Product successfully added to shopping card");
+                }
               },
               style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
@@ -174,12 +176,14 @@ class Widgets {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                          productModel.title.length > 15
-                              ? ("${productModel.title.substring(0, 15)}...")
+                          productModel.title.length > 13
+                              ? ("${productModel.title.substring(0, 13)}...")
                               : productModel.title,
                           style: title2),
                       IconButton(
-                          onPressed: (){},
+                          onPressed: (){
+                            deleteWarning(productModel.sqfId, context);
+                          },
                           icon: Icon(Icons.close, color: Colors.redAccent,))
                     ],
                   ),
@@ -388,4 +392,40 @@ class Widgets {
       ),
     );
   }
+
+  void showSnackBarMessage(BuildContext context, String message) {
+    final snackBar = SnackBar(
+      content: Text(message),
+      duration: Duration(seconds: 2),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  Future<void> deleteWarning(int productId,BuildContext context)async{
+    showDialog(context: context, builder: (context){
+      return AlertDialog(
+          title: Row(
+            children: [Icon(Icons.warning, color: Colors.red,), Text("Warning")],
+          ),
+        content: Text("Are you sure that you want to remove this product from shopping card"),
+        actions: [
+          TextButton(
+              onPressed: () async {
+                Navigator.pop(context);
+              },
+              child: Text("No",style: TextStyle(color: Colors.black),)
+          ),
+          TextButton(
+              onPressed: () async {
+                await sqfLiteService.deleteProduct(productId);
+                context.read<ShoppingCardViewModel>().readProducts();
+                Navigator.pop(context);
+              },
+              child: Text("Yes",style: TextStyle(color: Colors.black),)
+          ),
+        ],
+      );
+    });
+  }
+
 }

@@ -16,16 +16,20 @@ class ShoppingCardViewModel extends ChangeNotifier{
   double totalCost = 0;
 
 
-  Future<void>readProducts(int id)async{
+  Future<void>readProducts()async{
     isLoading = true;
     notifyListeners();
+    totalCost = 0;
+    productsList.clear();
+    fromDb.clear();
     var result = await sqfLiteService.getItems();
     fromDb = result.map((e){
-      return DbProductModel(e["product_id"], e["productId"]);
+      return DbProductModel(e["_id"], e["product_id"]);
     }).toList();
     for(int i = 0;i < fromDb.length;i++){
       var item = await httpService.getSingleProduct(fromDb[i].productId);
       item.sqfId = fromDb[i].id;
+      totalCost += item.price;
       productsList.add(item);
     }
     isLoading = false;

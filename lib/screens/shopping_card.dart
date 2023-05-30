@@ -19,7 +19,7 @@ class _ShoppingCardState extends State<ShoppingCard> {
 
   @override
   void initState() {
-    context.read<ShoppingCardViewModel>().readProducts(8);
+    context.read<ShoppingCardViewModel>().readProducts();
     super.initState();
   }
 
@@ -28,7 +28,7 @@ class _ShoppingCardState extends State<ShoppingCard> {
       backgroundColor: textColor,
       body: Consumer<ShoppingCardViewModel>(builder: (context, value, child) {
         if(value.isLoading){ return Center(child: CircularProgressIndicator()); }
-        if(value.productsList.length != 0){
+        else{
           return Column(
             children: [
               widgets.buildTabBar(context),
@@ -66,8 +66,6 @@ class _ShoppingCardState extends State<ShoppingCard> {
                   ))
             ],
           );
-        }else{
-          return Center(child: Text("Ooops something went wrong.\nPlease check your internet\nconnection and try again", style: title2),);
         }
       }),
     );
