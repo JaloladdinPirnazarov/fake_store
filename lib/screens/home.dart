@@ -55,84 +55,86 @@ class _HomeState extends State<Home> {
           title: const Text("Fake store API"),
           centerTitle: true,
         ),
-        body: Consumer<ProductsViewModel>(
-          builder: (context, value, child) {
-            if (value.isLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            final categories = value.categories;
-            final products = value.products;
-            return  Container(
-              height: MediaQuery.of(context).size.height,
-              color: white,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  widgets.buildSearchField(),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: widgets.buildBigTitle("Featured")),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  SizedBox(
-                    height: 55,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: categories.length,
-                          itemBuilder: (context, position) {
-                            return Container(
-                              margin: const EdgeInsets.all(10),
-                              child: InkWell(
-                                onTap: () {
-                                  Provider.of<ProductsViewModel>(context, listen: false).setProducts(position);
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.only(right: 15),
-                                  child: Text(
-                                    categories[position].category,
-                                    style: TextStyle(
-                                        color: categories[position].isSelected
-                                            ? Colors.black
-                                            : Colors.grey,
-                                        fontSize: 18),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    child: SizedBox(
-                      height: size.height / 2.2,
-                      child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: products.length,
-                          itemBuilder: (context, position) {
-                            return widgets.buildProductItem(products[position],
-                                size.width / 2.2, size.height / 2.5, context);
-                          }),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: widgets.buildBottomNavigationBar(context),
-                  ),
-                ],
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          color: white,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              widgets.buildSearchField(),
+              const SizedBox(
+                height: 20,
               ),
-            );
-          },
+              Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: widgets.buildBigTitle("Featured")),
+              const SizedBox(
+                height: 20,
+              ),
+              Consumer<ProductsViewModel>(
+                  builder: (context, value, child){
+                    if(value.isLoading){
+                      return Center(child: CircularProgressIndicator(),);
+                    }
+                    if(value.products.isNotEmpty){
+                      return Column(
+                        children: [
+                          SizedBox(
+                            height: 55,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount: value.categories.length,
+                                  itemBuilder: (context, position) {
+                                    return Container(
+                                      margin: const EdgeInsets.all(10),
+                                      child: InkWell(
+                                        onTap: () {
+                                          Provider.of<ProductsViewModel>(context, listen: false).setProducts(position);
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(right: 15),
+                                          child: Text(
+                                            value.categories[position].category,
+                                            style: TextStyle(
+                                                color: value.categories[position].isSelected
+                                                    ? Colors.black
+                                                    : Colors.grey,
+                                                fontSize: 18),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 15),
+                            child: SizedBox(
+                              height: size.height / 2.2,
+                              child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount: value.products.length,
+                                  itemBuilder: (context, position) {
+                                    return widgets.buildProductItem(value.products[position],
+                                        size.width / 2.2, size.height / 2.5, context);
+                                  }),
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                    return Center(child: Text("Ooops something went wrong"),);
+                  }),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: widgets.buildBottomNavigationBar(context),
+              ),
+            ],
+          ),
         ));
   }
 }
